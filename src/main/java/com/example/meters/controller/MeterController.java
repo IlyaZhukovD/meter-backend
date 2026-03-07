@@ -16,15 +16,23 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/meters")
 @RequiredArgsConstructor
+@Tag(name = "Meters", description = "Water meter management endpoints")
 public class MeterController {
 
     private final MeterService meterService;
     private final UserService userService;
 
     @PostMapping
+    @Operation(
+        summary = "Create new meter",
+        description = "Create a new water meter for the authenticated user"
+    )
     public ResponseEntity<Meter> createMeter(
             @Valid @RequestBody CreateMeterRequest request,
             Authentication authentication) {
@@ -34,6 +42,10 @@ public class MeterController {
     }
 
     @GetMapping
+    @Operation(
+        summary = "Get user meters",
+        description = "Retrieve all meters belonging to the authenticated user"
+    )
     public ResponseEntity<List<MeterResponse>> getUserMeters(Authentication authentication) {
         Long userId = getUserIdFromAuthentication(authentication);
         List<MeterResponse> meters = meterService.getUserMeters(userId);
@@ -41,6 +53,10 @@ public class MeterController {
     }
 
     @PatchMapping("/{id}")
+    @Operation(
+        summary = "Update meter",
+        description = "Update an existing meter belonging to the authenticated user"
+    )
     public ResponseEntity<Meter> updateMeter(
             @PathVariable Long id,
             @Valid @RequestBody UpdateMeterRequest request,

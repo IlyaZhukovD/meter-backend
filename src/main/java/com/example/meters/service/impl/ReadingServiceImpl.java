@@ -16,6 +16,8 @@ import com.example.meters.storage.FileStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -99,5 +101,10 @@ public class ReadingServiceImpl implements ReadingService {
     public Reading getReadingById(Long readingId) {
         return readingRepository.findById(readingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Reading not found with id: " + readingId));
+    }
+
+    @Override
+    public InputStream getFile(String filename) {
+        return fileStorageService.getFile(filename);
     }
 }

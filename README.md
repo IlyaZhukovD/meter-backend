@@ -49,32 +49,49 @@ Backend service for managing water meter readings with photo upload and analytic
 - API Docs: http://localhost:8080/v3/api-docs
    - MinIO Console: http://localhost:9003
 
-## API Endpoints
+## API Documentation
 
-### Authentication
+Full API documentation is available through Swagger UI:
+- **Swagger UI**: http://localhost:8080/swagger-ui.html
+- **API Docs**: http://localhost:8080/v3/api-docs
+
+### Key Endpoints
+
+#### Authentication
 - `POST /auth/register` - Register new user
 - `POST /auth/login` - Login user
 - `POST /auth/refresh` - Refresh access token
 
-### Meters
+#### Meters
 - `POST /meters` - Create meter
 - `GET /meters` - Get user meters
 - `PATCH /meters/{id}` - Update meter
 
-### Readings
-- `POST /readings` - Create reading with photo
+#### Readings
+- `POST /readings` - Create reading with photo (multipart/form-data) - requires meterId, value, and photo file
 - `GET /readings?meterId={id}` - Get meter readings
+- `GET /readings/files/{filename}` - Get photo file
 - `PATCH /readings/{id}` - Update reading
 - `DELETE /readings/{id}` - Delete reading (soft delete)
 
-### Recognition
-- `POST /recognize` - Recognize reading from photo
+#### Recognition
+- `POST /recognize` - Recognize reading from photo (multipart/form-data) - returns recognized value without saving to database
 
-### Charts
+#### Charts
 - `GET /meters/{id}/chart/readings` - Get readings chart
 - `GET /meters/{id}/chart/consumption` - Get consumption chart
 
-### Statistics
+##### Chart Aggregation Logic
+Charts support different time periods with smart data aggregation to optimize performance:
+
+- **WEEK**: No aggregation - shows all individual readings
+- **MONTH**: Aggregates by day - groups readings by day, showing maximum value per day
+- **YEAR**: Aggregates by month - groups readings by month, showing maximum value per month
+- **ALL**: Aggregates by month - groups all readings by month, showing maximum value per month
+
+Maximum 100 data points returned to prevent overload.
+
+#### Statistics
 - `GET /meters/{id}/stats` - Get meter statistics
 
 ## Demo Credentials

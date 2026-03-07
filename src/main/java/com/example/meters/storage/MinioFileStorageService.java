@@ -1,11 +1,15 @@
 package com.example.meters.storage;
 
-import io.minio.*;
+import io.minio.GetObjectArgs;
+import io.minio.GetObjectResponse;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.InputStream;
 import java.util.UUID;
 
@@ -28,7 +32,7 @@ public class MinioFileStorageService implements FileStorageService {
             if (originalFilename != null && originalFilename.contains(".")) {
                 extension = originalFilename.substring(originalFilename.lastIndexOf("."));
             }
-            String filename = UUID.randomUUID().toString() + extension;
+            String filename = UUID.randomUUID() + extension;
 
             // Upload file to MinIO
             try (InputStream inputStream = file.getInputStream()) {
@@ -43,10 +47,26 @@ public class MinioFileStorageService implements FileStorageService {
             }
 
             // Return URL
-            return "/files/" + filename;
+            return filename;
         } catch (Exception e) {
             log.error("Error uploading file to MinIO", e);
             throw new RuntimeException("Failed to upload file", e);
+        }
+    }
+
+    @Override
+    public InputStream getFile(String filename) {
+        try {
+            GetObjectResponse response = minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(filename)
+                            .build()
+            );
+            return response;
+        } catch (Exception e) {
+            log.error("Error downloading file from MinIO", e);
+            throw new RuntimeException("Failed to download file", e);
         }
     }
 }

@@ -8,5 +8,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface ReadingMapper {
     @Mapping(source = "meter.id", target = "meterId")
+    @Mapping(target = "photoUrl", expression = "java(\"/readings/files/\" + reading.getPhotoUrl())")
     ReadingResponse toResponse(Reading reading);
 }
