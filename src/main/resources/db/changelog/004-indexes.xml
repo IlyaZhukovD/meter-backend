@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="004-indexes" author="developer">
+        <createIndex tableName="meters" indexName="idx_meter_user">
+            <column name="user_id"/>
+        </createIndex>
+        
+        <createIndex tableName="readings" indexName="idx_reading_meter">
+            <column name="meter_id"/>
+        </createIndex>
+        
+        <createIndex tableName="readings" indexName="idx_reading_created">
+            <column name="created_at"/>
+        </createIndex>
+        
+        <createIndex tableName="readings" indexName="idx_reading_deleted">
+            <column name="deleted_at"/>
+        </createIndex>
+        
+        <createIndex tableName="readings" indexName="idx_reading_meter_date">
+            <column name="meter_id"/>
+            <column name="created_at"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

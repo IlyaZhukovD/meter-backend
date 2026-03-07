@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="003-create-readings" author="developer">
+        <createTable tableName="readings">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="meter_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="photo_url" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="deleted_at" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        
+        <addForeignKeyConstraint 
+            baseTableName="readings" 
+            baseColumnNames="meter_id"
+            constraintName="fk_reading_meter"
+            referencedTableName="meters"
+            referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>
