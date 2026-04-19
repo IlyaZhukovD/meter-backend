@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
 
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -44,6 +45,7 @@ public class ReadingController {
     public ResponseEntity<Reading> createReading(
             @RequestParam Long meterId,
             @RequestParam Integer value,
+            @RequestParam(required = false) LocalDate createdAt,
             @RequestParam("file") MultipartFile file,
             Authentication authentication) {
         Long userId = getUserIdFromAuthentication(authentication);
@@ -51,6 +53,12 @@ public class ReadingController {
         CreateReadingRequest request = new CreateReadingRequest();
         request.setMeterId(meterId);
         request.setValue(value);
+        if (createdAt != null) {
+            request.setCreatedAt(createdAt);
+        } else {
+            request.setCreatedAt(LocalDate.now());
+        }
+        
         
         Reading reading = readingService.createReading(request, file, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(reading);

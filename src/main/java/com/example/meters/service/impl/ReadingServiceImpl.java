@@ -48,7 +48,7 @@ public class ReadingServiceImpl implements ReadingService {
         reading.setMeter(meter);
         reading.setValue(request.getValue());
         reading.setPhotoUrl(photoUrl);
-        reading.setCreatedAt(LocalDateTime.now());
+        reading.setCreatedAt(LocalDateTime.of(request.getCreatedAt(), LocalDateTime.now().toLocalTime()));
 
         return readingRepository.save(reading);
     }
