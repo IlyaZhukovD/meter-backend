@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,7 +50,8 @@ public class ReadingServiceImpl implements ReadingService {
         reading.setMeter(meter);
         reading.setValue(request.getValue());
         reading.setPhotoUrl(photoUrl);
-        reading.setCreatedAt(LocalDateTime.of(request.getCreatedAt(), LocalDateTime.now().toLocalTime()));
+
+        reading.setCreatedAt(LocalDateTime.of(request.getCreatedAt(), LocalTime.of(0, 0, 0)));
 
         return readingRepository.save(reading);
     }
@@ -81,7 +83,7 @@ public class ReadingServiceImpl implements ReadingService {
         reading.setValue(request.getValue());
 
         if (request.getCreatedAt() != null) {
-            reading.setCreatedAt(LocalDateTime.of(request.getCreatedAt(), LocalDateTime.now().toLocalTime()));
+            reading.setCreatedAt(LocalDateTime.of(request.getCreatedAt(), LocalTime.of(0, 0, 0)));
         } else {
             reading.setCreatedAt(LocalDateTime.now());
         }

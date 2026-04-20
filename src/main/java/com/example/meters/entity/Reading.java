@@ -34,11 +34,6 @@ public class Reading {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
-
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
