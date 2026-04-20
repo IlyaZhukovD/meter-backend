@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StatsResponse {
-    private Integer monthConsumption;
-    private Integer averageMonthConsumption;
+    private long monthConsumption;
+    private long averageMonthConsumption;
 }

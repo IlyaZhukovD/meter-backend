@@ -37,15 +37,15 @@ public class StatsServiceImpl implements StatsService {
         }
 
         // Calculate month consumption (last reading of month - first reading of month)
-        Integer monthConsumption = calculateMonthConsumption(readings);
+        long monthConsumption = calculateMonthConsumption(readings);
 
         // Calculate average month consumption
-        Integer averageMonthConsumption = calculateAverageMonthConsumption(readings);
+        long averageMonthConsumption = calculateAverageMonthConsumption(readings);
 
         return new StatsResponse(monthConsumption, averageMonthConsumption);
     }
 
-    private Integer calculateMonthConsumption(List<Reading> readings) {
+    private long calculateMonthConsumption(List<Reading> readings) {
         if (readings.size() < 2) {
             return 0;
         }
@@ -58,19 +58,12 @@ public class StatsServiceImpl implements StatsService {
         // Get current month readings
         YearMonth currentMonth = YearMonth.now();
         List<Reading> currentMonthReadings = readingsByMonth.getOrDefault(currentMonth, List.of());
+        List<Reading> prevMonthReadings = readingsByMonth.getOrDefault(currentMonth.minusMonths(1), List.of());
 
-        if (currentMonthReadings.size() < 2) {
-            return 0;
-        }
-
-        // Get first and last reading of the month
-        Reading firstReading = currentMonthReadings.get(0);
-        Reading lastReading = currentMonthReadings.get(currentMonthReadings.size() - 1);
-
-        return lastReading.getValue() - firstReading.getValue();
+        return Math.round(currentMonthReadings.stream().mapToInt(Reading::getValue).average().orElse(0.0) - prevMonthReadings.stream().mapToInt(Reading::getValue).average().orElse(0.0));
     }
 
-    private Integer calculateAverageMonthConsumption(List<Reading> readings) {
+    private long calculateAverageMonthConsumption(List<Reading> readings) {
         if (readings.size() < 2) {
             return 0;
         }
@@ -81,23 +74,21 @@ public class StatsServiceImpl implements StatsService {
                         r -> YearMonth.from(r.getCreatedAt())));
 
         // Calculate consumption for each month
-        List<Integer> monthlyConsumptions = readingsByMonth.values().stream()
-                .filter(monthReadings -> monthReadings.size() >= 2)
+        List<Long> monthlyConsumptions = readingsByMonth.values().stream()
+                .filter(monthReadings -> !monthReadings.isEmpty())
                 .map(monthReadings -> {
-                    Reading first = monthReadings.get(0);
-                    Reading last = monthReadings.get(monthReadings.size() - 1);
-                    return last.getValue() - first.getValue();
+                    return Math.round(monthReadings.stream().mapToInt(Reading::getValue).average().orElse(0.0));
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         if (monthlyConsumptions.isEmpty()) {
             return 0;
         }
 
         // Calculate average
-        return (int) Math.round(monthlyConsumptions.stream()
-                .mapToInt(Integer::intValue)
+        return Math.round(monthlyConsumptions.stream()
+                .mapToLong(Long::longValue)
                 .average()
-                .orElse(0));
+                .orElse(0L));
     }
 }
